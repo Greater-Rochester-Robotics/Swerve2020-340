@@ -67,7 +67,7 @@ public class SwerveModule {
      * @return the position of the module in degrees, should limit from -180 to 180
      */
     public double getPosInDeg(){ 
-        return 0.0;//TODO: poll the getPosInRad() and multiply by the conversion constant
+        return getPosInRad()*Constants.RAD_TO_DEG_CONV_FACTOR;
     }
 
     /**
@@ -82,8 +82,9 @@ public class SwerveModule {
      * @param targetPos a value between -PI and PI, PI is counter-clockwise, 0.0 is forward 
      */
     public void setPosInRad(double targetPos){
-        //TODO: Find the difference between the targetPos and the currentPos
+        double posDiff = targetPos - getPosInRad();
         //TODO: Check you have the shortest distance(circle, eg the shortest distance between -2 and 2 is not going through 0
+        //if abs posDiff > Math.PI (incomplete-very complicated, still unsure)
         //TODO: Convert the shortest distance to encoder value(use convertion factor) 
         //TODO: add the encoder distance to the current encoder count
 
