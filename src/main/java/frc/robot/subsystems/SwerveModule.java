@@ -83,11 +83,11 @@ public class SwerveModule {
      */
     public void setPosInRad(double targetPos){
         double posDiff = targetPos - getPosInRad();
-        //TODO: Check you have the shortest distance(circle, eg the shortest distance between -2 and 2 is not going through 0
-        //if abs posDiff > Math.PI (incomplete-very complicated, still unsure)
+        double shortDis = posDiff - (2*Math.PI*Math.signum(posDiff));
         //TODO: Convert the shortest distance to encoder value(use convertion factor) 
+        double encDis = shortDis*Constants.RAD_TO_ENC_CONV_FACTOR;
         //TODO: add the encoder distance to the current encoder count
-
+        
         //TODO: set the setpoint using setReference on the PIDController
         // rotatePID.setReference(targetPos, ControlType.kPosition);
     }    
