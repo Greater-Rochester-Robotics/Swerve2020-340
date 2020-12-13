@@ -7,20 +7,24 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
-import frc.robot.Constants;
-
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANAnalog;
 
+import frc.robot.Constants;
+
+
+
 /**
  * This is the class containing both motor controllers and all functions needed to run one swerve module.
+ * This is a subsystem for testing purposes, and maybe to use the periodic function to reduce calls to the rotation sensor.
  */
-public class SwerveModule {
+public class SwerveModule extends SubsystemBase {
     private CANSparkMax driveMotor;
     private CANSparkMax rotationMotor;
     private CANEncoder rotationEncoder;
@@ -40,6 +44,7 @@ public class SwerveModule {
 
         rotationMotor = new CANSparkMax(rotationMotorID , MotorType.kBrushless);
         rotationMotor.restoreFactoryDefaults();//reset the motor controller, wipe old stuff
+
         rotationEncoder = rotationMotor.getEncoder();
         rotationSensor = rotationMotor.getAnalog(CANAnalog.AnalogMode.kAbsolute);
         rotationSensor.setPositionConversionFactor(Constants.VOLTAGE_TO_RAD_CONV_FACTOR);
@@ -47,6 +52,7 @@ public class SwerveModule {
         rotatePID = rotationMotor.getPIDController();
         rotatePID.setFeedbackDevice(rotationEncoder);
 
+        //set the PID values for the Encoder controlled rotation
         rotatePID.setP(Constants.SWERVE_ROT_P_VALUE);
         rotatePID.setI(Constants.SWERVE_ROT_I_VALUE);
         rotatePID.setD(Constants.SWERVE_ROT_D_VALUE);
@@ -60,7 +66,7 @@ public class SwerveModule {
      * @param value a number between -1.0 and 1.0, where 0.0 is not moving
      */
     public void setDriveMotor(double value){
-        driveMotor.set(value);
+        driveMotor.set(value);//*(isInvertted?-1:0));
     }
 
     /**
@@ -71,10 +77,22 @@ public class SwerveModule {
     }
 
     /**
+     * If this is too resource intensive, switch to a periodic call,
+     *  and replace with a poll of said variable
      * @return the position of the module in radians, should limit from -PI to PI
      */
     public double getPosInRad(){
-        return rotationSensor.getPosition() - Math.PI;//this has to be checked, if the sensor is positive clockwise, fix
+        return rotationSensor.getPosition() - Math.PI;//(isInverted?0:Math.PI));
+        //TODO:Above has to be checked, if the sensor is positive clockwise, fix(Need Robot)
+    }
+
+    /**
+     * this is a function meant for testing by getting the count from
+     *  the rotational encoder which is internal to the NEO550.
+     * @return the encoder count(no units, naturally just the count)
+     */
+    public double getEncCount(){
+        return rotationEncoder.getPosition();
     }
 
     /**
@@ -83,12 +101,44 @@ public class SwerveModule {
      */
     public void setPosInRad(double targetPos){
         double posDiff = targetPos - getPosInRad();
-        double shortDis = posDiff - (2*Math.PI*Math.signum(posDiff));
-        //TODO: Convert the shortest distance to encoder value(use convertion factor) 
-        double encDis = shortDis*Constants.RAD_TO_ENC_CONV_FACTOR;
-        //TODO: add the encoder distance to the current encoder count
+        double absDiff = Math.abs(posDiff);
+        if(absDiff > Math.PI){
+            //the distance the other way around the circle
+            posDiff = posDiff - (2*Math.PI*Math.signum(posDiff));
+        }
+
+        // //This is for inverteing the motor if target angle is 90-270 degrees away (not ready yet)
+        // //To fix going the wrong way around the circle
+        // if(absDiff >= Constants.THREE_PI_OVER_TWO){
+        //     //the distance the other way around the circle
+        //     posDiff = posDiff - (2*Math.PI*Math.signum(posDiff));
+        // //if between 90 and 270 invert the motor
+        // }else if(absDiff > Constants.THREE_PI_OVER_TWO && absDiff < Constants.PI_OVER_TWO){
+        //     //switch the mmotor inversion
+        //     isInverted = !isInverted;
+        //     //Since inverted, recompute everything
+        //     posDiff = targetPos - getPosInRad();
+        //     absDiff = Math.abs(posDiff);
+        //     if(absDiff > Constants.THREE_PI_OVER_TWO){
+        //         //the distance the other way around the circle
+        //         posDiff = posDiff - (2*Math.PI*Math.signum(posDiff));
+        //     }
+        // }
+     
+        //Convert the shortest distance to encoder value(use convertion factor) 
+        double targetEncDistance = posDiff*Constants.RAD_TO_ENC_CONV_FACTOR;
+        //add the encoder distance to the current encoder count
+        double outputEncValue = targetEncDistance + rotationEncoder.getPosition();
         
-        //TODO: set the setpoint using setReference on the PIDController
-        // rotatePID.setReference(targetPos, ControlType.kPosition);
-    }    
+        //Set the setpoint using setReference on the PIDController
+        rotatePID.setReference(outputEncValue, ControlType.kPosition);
+    }
+
+    /**
+     * this method is used to stop the module completely.
+     */
+    public void stopAll(){
+        driveMotor.set(0.0);
+        rotatePID.setReference(0.0,ControlType.kVoltage);
+    }
 }
