@@ -23,6 +23,7 @@ public final class Constants {
     public static final double RAD_TO_ENC_CONV_FACTOR = 0.0;//TODO:find the radian to enc factor(Mech Team)
     public static final double PI_OVER_TWO = Math.PI/2;
     public static final double THREE_PI_OVER_TWO = 3*PI_OVER_TWO;
+    public static final double TWO_PI = 2*Math.PI;
 
     //Swerve dimension factors, distances from center of mass(units irrelivent, must all be the same though!)
     public static final double X_POSITIVE_DISTANCE_FROM_CENTER = 5;//TODO:find this distance(Mech Team)

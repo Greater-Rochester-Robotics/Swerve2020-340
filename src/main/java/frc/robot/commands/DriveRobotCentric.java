@@ -8,6 +8,9 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Robot;
+import frc.robot.RobotContainer;
+import frc.robot.RobotContainer.Axis;
 
 public class DriveRobotCentric extends CommandBase {
   /**
@@ -15,6 +18,7 @@ public class DriveRobotCentric extends CommandBase {
    */
   public DriveRobotCentric() {
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(RobotContainer.swerveDrive);
   }
 
   // Called when the command is initially scheduled.
@@ -25,7 +29,10 @@ public class DriveRobotCentric extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //TODO:Write this code Robot Centric
+    RobotContainer.swerveDrive.driveRobotCentric(
+      Robot.robotContainer.getDriverAxis(Axis.LEFT_Y) ,
+      Robot.robotContainer.getDriverAxis(Axis.LEFT_X) ,
+      Robot.robotContainer.getDriverAxis(Axis.RIGHT_X) );
   }
 
   // Called once the command ends or is interrupted.

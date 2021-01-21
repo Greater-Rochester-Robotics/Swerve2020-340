@@ -84,6 +84,16 @@ public class SwerveModule extends SubsystemBase {
     public double getPosInRad(){
         return rotationSensor.getPosition() - Math.PI;//(isInverted?0:Math.PI));
         //TODO:Above has to be checked, if the sensor is positive clockwise, fix(Need Robot)
+        // double currentAngle = rotationSensor.getPosition();
+        // if(isInverted){
+        //     if(currentAngle <= Math.PI){
+        //         return currentAngle;
+        //     }else{
+        //         return Constants.TWO_PI-currentAngle;
+        //     }
+        // }else{
+        //     return rotationSensor.getPosition() - Math.PI;
+        // }
     }
 
     /**
@@ -104,24 +114,24 @@ public class SwerveModule extends SubsystemBase {
         double absDiff = Math.abs(posDiff);
         if(absDiff > Math.PI){
             //the distance the other way around the circle
-            posDiff = posDiff - (2*Math.PI*Math.signum(posDiff));
+            posDiff = posDiff - (Constants.TWO_PI*Math.signum(posDiff));
         }
 
-        // //This is for inverteing the motor if target angle is 90-270 degrees away (not ready yet)
+        // //This is for inverting the motor if target angle is 90-270 degrees away (not ready yet)
         // //To fix going the wrong way around the circle
         // if(absDiff >= Constants.THREE_PI_OVER_TWO){
         //     //the distance the other way around the circle
-        //     posDiff = posDiff - (2*Math.PI*Math.signum(posDiff));
+        //     posDiff = posDiff - (Constants.TWO_PI*Math.signum(posDiff));
         // //if between 90 and 270 invert the motor
-        // }else if(absDiff > Constants.THREE_PI_OVER_TWO && absDiff < Constants.PI_OVER_TWO){
-        //     //switch the mmotor inversion
+        // }else if(absDiff < Constants.THREE_PI_OVER_TWO && absDiff > Constants.PI_OVER_TWO){
+        //     //switch the motor inversion
         //     isInverted = !isInverted;
         //     //Since inverted, recompute everything
         //     posDiff = targetPos - getPosInRad();
         //     absDiff = Math.abs(posDiff);
         //     if(absDiff > Constants.THREE_PI_OVER_TWO){
         //         //the distance the other way around the circle
-        //         posDiff = posDiff - (2*Math.PI*Math.signum(posDiff));
+        //         posDiff = posDiff - (Constants.TWO_PI*Math.signum(posDiff));
         //     }
         // }
      

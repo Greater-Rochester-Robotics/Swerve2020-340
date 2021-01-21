@@ -49,7 +49,7 @@ public class SwerveDrive extends SubsystemBase {
    * Creates a new SwerveDrive.
    */
   public SwerveDrive() {
-    //TODO:properly construct the swerve modules, and put then in an array, int already in Constants
+    //TODO:properly construct the swerve modules, and put them in an array, int already in Constants
     // frontLeft = new SwerveModule();
     // rearLeft = new SwerveModule();
     // rearRight = new SwerveModule();
@@ -84,7 +84,7 @@ public class SwerveDrive extends SubsystemBase {
       
       //compute the y-component of the vector by adding the targetVector to the cross product with rotspeed
       targetModuleVectors[1][i] = 
-        targetMoveVector[1] + (rotSpeed*Constants.MODULE_UNIT_VECTORS[0][i] );//TODO:ccheck if this sign is right
+        targetMoveVector[1] + (rotSpeed*Constants.MODULE_UNIT_VECTORS[0][i] );//TODO:check if this sign is right
     }
 
     //generates angles for each module

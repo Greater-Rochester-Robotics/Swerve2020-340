@@ -8,9 +8,11 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.SwerveDrive;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /**
@@ -22,6 +24,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+  
+  final Joystick driver = new Joystick(0);
+  final Joystick coDriver = new Joystick(1);
+
+  public static SwerveDrive swerveDrive;
 
   private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
 
@@ -31,6 +38,7 @@ public class RobotContainer {
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    swerveDrive = new SwerveDrive();
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -53,5 +61,31 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     return m_autoCommand;
+  }
+
+  
+  public enum Axis {
+    LEFT_X(0), LEFT_Y(1), LEFT_TRIGGER(2), RIGHT_TRIGGER(3), RIGHT_X(4), RIGHT_Y(5);
+
+    private int axis;
+
+    private Axis(int axis) {
+      this.axis = axis;
+    }
+
+    public int getAxisNumber() {
+      return axis;
+    }
+  }
+
+  /**
+   * 
+   * @param axis
+   * @return
+   */
+  public double getDriverAxis(Axis axis) {
+    return (driver.getRawAxis(axis.getAxisNumber()) < -.1 || driver.getRawAxis(axis.getAxisNumber()) > .1)
+        ? driver.getRawAxis(axis.getAxisNumber())
+        : 0;
   }
 }
