@@ -24,7 +24,7 @@ import com.analog.adis16448.frc.ADIS16448_IMU.IMUAxis;
  */
 public class SwerveDrive extends SubsystemBase {
   private static SwerveModule swerveModules[];
-  private static SwerveModule frontLeft,rearLeft,rearRight,frontRight;
+  private static SwerveModule frontLeft, rearLeft, rearRight, frontRight;
   public ADIS16448_IMU imu;
   
   /**
@@ -49,20 +49,24 @@ public class SwerveDrive extends SubsystemBase {
    * Creates a new SwerveDrive.
    */
   public SwerveDrive() {
-    //TODO:properly construct the swerve modules, and put then in an array, int already in Constants
-    // frontLeft = new SwerveModule();
-    // rearLeft = new SwerveModule();
-    // rearRight = new SwerveModule();
-    // frontRight = new SwerveModule();
-    ////This may seem repetitive, but it makes clear which module is which.
-    // swerveModules = new SwerveModule[]{
-    //   frontLeft,
-    //   rearLeft,
-    //   rearRight,
-    //   frontRight
-    // };
     
-    //TODO:Construct the IMU object, alreeady named imu
+    // Constructs the swerve modules 
+    frontLeft = new SwerveModule(Constants.FRONT_LEFT_MOVE_MOTOR, Constants.FRONT_LEFT_ROTATE_MOTOR);
+    rearLeft = new SwerveModule(Constants.REAR_LEFT_MOVE_MOTOR, Constants.REAR_LEFT_ROTATE_MOTOR);
+    rearRight = new SwerveModule(Constants.REAR_RIGHT_MOVE_MOTOR, Constants.REAR_RIGHT_ROTATE_MOTOR);
+    frontRight = new SwerveModule(Constants.FRONT_RIGHT_MOVE_MOTOR, Constants.FRONT_RIGHT_ROTATE_MOTOR);
+    
+     //This may seem repetitive, but it makes clear which module is which.
+    
+    swerveModules = new SwerveModule[]{
+      frontLeft,
+      rearLeft,
+      rearRight,
+      frontRight
+    };
+    
+    // Constructs IMU object
+    imu = new ADIS16448_IMU();
 
   }
 
@@ -84,7 +88,7 @@ public class SwerveDrive extends SubsystemBase {
       
       //compute the y-component of the vector by adding the targetVector to the cross product with rotspeed
       targetModuleVectors[1][i] = 
-        targetMoveVector[1] + (rotSpeed*Constants.MODULE_UNIT_VECTORS[0][i] );//TODO:ccheck if this sign is right
+        targetMoveVector[1] + (rotSpeed*Constants.MODULE_UNIT_VECTORS[0][i] );//TODO: check if this sign is right
     }
 
     //generates angles for each module
@@ -93,9 +97,15 @@ public class SwerveDrive extends SubsystemBase {
       targetModuleAngles[i] = Math.atan2( targetModuleVectors[1][i] , targetModuleVectors[0][i] );
     }
 
-    //TODO:assign the angles to the swerve drive modules (use a for loop and setPosInRad())
+    // assign the angles to the swerve drive modules (use a for loop and setPosInRad())
+    for (int i=0; i<4; i++){
+      swerveModules[i].setPosInRad(targetModuleAngles[i]); 
+    }
 
-    double[] curAngles;//TODO:pull the current angles of the modules(use a for loop and getPosInRad())
+    double[] curAngles = new double[4]; // pull the current angles of the modules(use a for loop and getPosInRad())
+    for (int i=0; i<4; i++){
+      curAngles[i] = swerveModules[i].getPosInRad();
+    }
     
 
     double[] targetMotorSpeeds = new double[4];
