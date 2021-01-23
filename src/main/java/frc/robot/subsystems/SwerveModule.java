@@ -30,7 +30,7 @@ public class SwerveModule extends SubsystemBase {
     private CANEncoder rotationEncoder;
     private CANAnalog rotationSensor;
     private CANPIDController rotatePID;
-    // private boolean isInverted = false;//this is for a future function
+    private boolean isInverted = false;//this is for a future function
 
     /**
      * Creates a new SwerveModule object
@@ -39,16 +39,18 @@ public class SwerveModule extends SubsystemBase {
      * @param rotateMotorID The CAN ID of the SparkMax connected to the module rotation motor(expecting NEO 550)
      */  
     public SwerveModule(int driveMotorID,int rotationMotorID){
+        //TODO:change this to a TalonFX, check all uses of driveMotor for the right syntax
         driveMotor = new CANSparkMax(driveMotorID, MotorType.kBrushless);
         driveMotor.restoreFactoryDefaults();//reset the motor controller, wipe old stuff
 
         rotationMotor = new CANSparkMax(rotationMotorID , MotorType.kBrushless);
         rotationMotor.restoreFactoryDefaults();//reset the motor controller, wipe old stuff
 
-        rotationEncoder = rotationMotor.getEncoder();
+        //TODO:change this Analog to a CANCoder(comment out), this requires an additional constructor parameter 
         rotationSensor = rotationMotor.getAnalog(CANAnalog.AnalogMode.kAbsolute);
         rotationSensor.setPositionConversionFactor(Constants.VOLTAGE_TO_RAD_CONV_FACTOR);
 
+        rotationEncoder = rotationMotor.getEncoder();
         rotatePID = rotationMotor.getPIDController();
         rotatePID.setFeedbackDevice(rotationEncoder);
 
@@ -69,6 +71,10 @@ public class SwerveModule extends SubsystemBase {
         driveMotor.set(value);//*(isInvertted?-1:0));
     }
 
+    //TODO:create access to the driveMotor encoder count
+
+    //TODO:create a reset for the driveMotor encoder
+
     /**
      * @return the position of the module in degrees, should limit from -180 to 180
      */
@@ -82,6 +88,7 @@ public class SwerveModule extends SubsystemBase {
      * @return the position of the module in radians, should limit from -PI to PI
      */
     public double getPosInRad(){
+        //TODO:fix math to allign with CANCoder outputs
         return rotationSensor.getPosition() - Math.PI;//(isInverted?0:Math.PI));
         //TODO:Above has to be checked, if the sensor is positive clockwise, fix(Need Robot)
         // double currentAngle = rotationSensor.getPosition();

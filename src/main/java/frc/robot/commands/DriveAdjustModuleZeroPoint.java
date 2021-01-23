@@ -9,17 +9,12 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-/**
- * A command to test one module at a time, it takes that module as a constructor arguement
- */
-public class DriveOneModule extends CommandBase {
-  private int moduleNum;
+public class DriveAdjustModuleZeroPoint extends CommandBase {
   /**
-   * Creates a new DriveOneModule.
+   * Creates a new DriveAdjustModuleZeroPoint.
    */
-  public DriveOneModule(int moduleNumber) {
+  public DriveAdjustModuleZeroPoint() {
     //TODO:addRequirements use addRequirements() and pull the subSystem object from RobotContainer
-    //TODO:assign the passed module number to the field of similiar name
   }
 
   // Called when the command is initially scheduled.
@@ -30,13 +25,11 @@ public class DriveOneModule extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //TODO:Write this code, drive one module test. Using driveOneModule
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    //RODO:Make sure to stop the module, by using a stopAll method from SwerveDrive
   }
 
   // Returns true when the command should end.
