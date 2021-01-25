@@ -7,8 +7,6 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -22,9 +20,8 @@ import frc.robot.Constants;
 
 /**
  * This is the class containing both motor controllers and all functions needed to run one swerve module.
- * This is a subsystem for testing purposes, and maybe to use the periodic function to reduce calls to the rotation sensor.
  */
-public class SwerveModule extends SubsystemBase {
+public class SwerveModule{
     private CANSparkMax driveMotor;
     private CANSparkMax rotationMotor;
     private CANEncoder rotationEncoder;
@@ -48,6 +45,7 @@ public class SwerveModule extends SubsystemBase {
 
         //TODO:change this Analog to a CANCoder(comment out), this requires an additional constructor parameter 
         rotationSensor = rotationMotor.getAnalog(CANAnalog.AnalogMode.kAbsolute);
+        //TODO:use configAbsoluteSensorRange() in mode
         rotationSensor.setPositionConversionFactor(Constants.VOLTAGE_TO_RAD_CONV_FACTOR);
 
         rotationEncoder = rotationMotor.getEncoder();
@@ -75,10 +73,13 @@ public class SwerveModule extends SubsystemBase {
 
     //TODO:create a reset for the driveMotor encoder
 
+    //TODO:create a means of setting the value of the CANCoder(use setPosition of the CANCoder)
+
     /**
      * @return the position of the module in degrees, should limit from -180 to 180
      */
     public double getPosInDeg(){ 
+        //TODO:change to just getPostion from rotationSensor
         return getPosInRad()*Constants.RAD_TO_DEG_CONV_FACTOR;
     }
 
@@ -88,7 +89,7 @@ public class SwerveModule extends SubsystemBase {
      * @return the position of the module in radians, should limit from -PI to PI
      */
     public double getPosInRad(){
-        //TODO:fix math to allign with CANCoder outputs
+        //TODO:call getPosInDeg() and convert by multiplying by PI
         return rotationSensor.getPosition() - Math.PI;//(isInverted?0:Math.PI));
         //TODO:Above has to be checked, if the sensor is positive clockwise, fix(Need Robot)
         // double currentAngle = rotationSensor.getPosition();

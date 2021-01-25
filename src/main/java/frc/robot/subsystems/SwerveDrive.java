@@ -176,4 +176,6 @@ public class SwerveDrive extends SubsystemBase {
     return 0.0;//TODO:Pull gyro in radians and convert to degrees
   }
 
+  //TODO:create Stop all method to stop all the motors using the stopAll method
+
 }
