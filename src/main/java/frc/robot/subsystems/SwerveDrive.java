@@ -136,7 +136,10 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     
-    //TODO:assign output to each module(use a for loop with targetMotorSpeeds[])
+    //assign output to each module(use a for loop with targetMotorSpeeds[])
+    for (int i=0; i<4; i++){
+      swerveModules[i].setDriveMotor(targetMotorSpeeds[i]);
+    }
 
   }
 
@@ -147,8 +150,8 @@ public class SwerveDrive extends SubsystemBase {
    * @param rotSpeed
    */
   public void driveFieldCentric(double awaySpeed, double lateralSpeed, double rotSpeed){
-    double robotForwardSpeed = 0.0;//TODO:use Math.cos(this.getGyroInRad())*awaySpeed plus Math.sin() * lateralSpeed
-    double robotStrafeSpeed = 0.0;//TODO:add the reverse of the above, cos with latera Speed and sin with awaySpeed
+    double robotForwardSpeed = (Math.cos(this.getGyroInRad())*awaySpeed) + (Math.sin(this.getGyroInRad()) * lateralSpeed);
+    double robotStrafeSpeed = (Math.cos(this.getGyroInRad())*lateralSpeed) + (Math.sin(this.getGyroInRad()) * awaySpeed);
     this.driveRobotCentric( robotForwardSpeed , robotStrafeSpeed , rotSpeed );
   }
 
@@ -159,8 +162,14 @@ public class SwerveDrive extends SubsystemBase {
    * @param rotatePos
    */
   public void driveOneModule(int moduleNumber,double moveSpeed, double rotatePos){
-    //TODO:test that moduleNumber is between 0-3, return if not(return;)
-    //TODO:write code to drive one module in a testing form
+    //test that moduleNumber is between 0-3, return if not(return;)
+    if (moduleNumber > 3 && moduleNumber < 0){
+      return;
+    }
+    
+    //write code to drive one module in a testing form
+    swerveModules[moduleNumber].setPosInRad(rotatePos);
+    swerveModules[moduleNumber].setDriveMotor(moveSpeed);
   }
 
   /**
@@ -168,6 +177,7 @@ public class SwerveDrive extends SubsystemBase {
    */
   public void resetGyro(){
     //TODO:Reset the gyro(zero it)
+    
   }
 
   /**
