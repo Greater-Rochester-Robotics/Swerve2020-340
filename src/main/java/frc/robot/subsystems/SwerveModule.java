@@ -14,6 +14,11 @@ import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANAnalog;
 
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
+import com.ctre.phoenix.sensors.CANCoder;
+import com.ctre.phoenix.sensors.AbsoluteSensorRange;
+
 import frc.robot.Constants;
 
 
@@ -22,10 +27,11 @@ import frc.robot.Constants;
  * This is the class containing both motor controllers and all functions needed to run one swerve module.
  */
 public class SwerveModule{
-    private CANSparkMax driveMotor;
+    private TalonFX driveMotor;
+    private CANCoder rotateSensor;
     private CANSparkMax rotationMotor;
     private CANEncoder rotationEncoder;
-    private CANAnalog rotationSensor;
+    // private CANAnalog rotationSensor;
     private CANPIDController rotatePID;
     private boolean isInverted = false;//this is for a future function
 
@@ -35,18 +41,17 @@ public class SwerveModule{
      * @param driveMotorID The CAN ID of the SparkMax connected to the drive motor(expecting NEO)
      * @param rotateMotorID The CAN ID of the SparkMax connected to the module rotation motor(expecting NEO 550)
      */  
-    public SwerveModule(int driveMotorID,int rotationMotorID){
+    public SwerveModule(int driveMotorID,int rotationMotorID,int canCoderID){
         //TODO:change this to a TalonFX, check all uses of driveMotor for the right syntax
-        driveMotor = new CANSparkMax(driveMotorID, MotorType.kBrushless);
-        driveMotor.restoreFactoryDefaults();//reset the motor controller, wipe old stuff
-
+        driveMotor = new TalonFX(driveMotorID);
+        
         rotationMotor = new CANSparkMax(rotationMotorID , MotorType.kBrushless);
         rotationMotor.restoreFactoryDefaults();//reset the motor controller, wipe old stuff
-
-        //TODO:change this Analog to a CANCoder(comment out), this requires an additional constructor parameter 
-        rotationSensor = rotationMotor.getAnalog(CANAnalog.AnalogMode.kAbsolute);
-        //TODO:use configAbsoluteSensorRange() in mode
-        rotationSensor.setPositionConversionFactor(Constants.VOLTAGE_TO_RAD_CONV_FACTOR);
+    
+        rotateSensor = new CANCoder(canCoderID);
+        rotateSensor.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
+        // rotationSensor = rotationMotor.getAnalog(CANAnalog.AnalogMode.kAbsolute);
+        // rotationSensor.setPositionConversionFactor(Constants.VOLTAGE_TO_RAD_CONV_FACTOR);
 
         rotationEncoder = rotationMotor.getEncoder();
         rotatePID = rotationMotor.getPIDController();
@@ -66,10 +71,17 @@ public class SwerveModule{
      * @param value a number between -1.0 and 1.0, where 0.0 is not moving
      */
     public void setDriveMotor(double value){
-        driveMotor.set(value);//*(isInvertted?-1:0));
+        driveMotor.set(TalonFXControlMode.PercentOutput,value);//*(isInvertted?-1:0));
     }
 
     //TODO:create access to the driveMotor encoder count
+    public double getDriveDistance(){
+        return drivemotor.getSensorCollection().getIntegratedSensorPosition();
+    }
+
+    public double getDriveVelocity(){
+        return drivemotorVelosity.getSensorCollection().getIntegratedSensorVelosity();
+    }
 
     //TODO:create a reset for the driveMotor encoder
 
@@ -80,7 +92,7 @@ public class SwerveModule{
      */
     public double getPosInDeg(){ 
         //TODO:change to just getPostion from rotationSensor
-        return getPosInRad()*Constants.RAD_TO_DEG_CONV_FACTOR;
+        return rotateSensor.getAbsolutePosition();
     }
 
     /**
@@ -90,7 +102,7 @@ public class SwerveModule{
      */
     public double getPosInRad(){
         //TODO:call getPosInDeg() and convert by multiplying by PI
-        return rotationSensor.getPosition() - Math.PI;//(isInverted?0:Math.PI));
+        return getPosInDeg()*Constants.DEG_TO_RAD_CONV_FACTOR;//(isInverted?0:Math.PI));
         //TODO:Above has to be checked, if the sensor is positive clockwise, fix(Need Robot)
         // double currentAngle = rotationSensor.getPosition();
         // if(isInverted){
