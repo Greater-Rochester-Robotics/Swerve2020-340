@@ -7,6 +7,8 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.GyroBase;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -176,7 +178,9 @@ public class SwerveDrive extends SubsystemBase {
    * A function that allows the user to reset the gyro
    */
   public void resetGyro(){
-    //TODO:Reset the gyro(zero it)
+    //Resets the gyro(zero it)
+    imu.reset();
+     
     
   }
 
@@ -185,7 +189,11 @@ public class SwerveDrive extends SubsystemBase {
    * @return the angle of the robot in radians
    */
   public double getGyroInRad(){
-    return 0.0;//TODO:Pull and return gyro in radians
+  return imu.getAngle() * Math.PI/180 ;
+   //Pull and return gyro in radians
+    
+
+
   }
 
   /**
@@ -193,7 +201,8 @@ public class SwerveDrive extends SubsystemBase {
    * @return the angle of the robot in degrees
    */
   public double getGyroInDeg(){
-    return 0.0;//TODO:Pull gyro in radians and convert to degrees
+    return imu.getAngle();//Pull gyro in radians and convert to degrees
+    
   }
 
 }

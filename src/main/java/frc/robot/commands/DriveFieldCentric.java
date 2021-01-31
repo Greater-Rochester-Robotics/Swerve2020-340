@@ -8,6 +8,9 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Robot;
+import frc.robot.RobotContainer;
+import frc.robot.RobotContainer.Axis;
 
 public class DriveFieldCentric extends CommandBase {
   /**
@@ -25,7 +28,12 @@ public class DriveFieldCentric extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //TODO:Write this code FieldCentric
+
+    RobotContainer.swerveDrive.driveFieldCentric(
+      Robot.robotContainer.getDriverAxis(Axis.LEFT_Y) ,
+      Robot.robotContainer.getDriverAxis(Axis.LEFT_X) ,
+      Robot.robotContainer.getDriverAxis(Axis.RIGHT_X)
+    );
   }
 
   // Called once the command ends or is interrupted.

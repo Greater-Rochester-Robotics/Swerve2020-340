@@ -88,4 +88,8 @@ public class RobotContainer {
         ? driver.getRawAxis(axis.getAxisNumber())
         : 0;
   }
+
+  public int getDriverDPad() {
+    return (driver.getPOV());
+  }
 }
