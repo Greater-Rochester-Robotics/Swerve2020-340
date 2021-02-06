@@ -30,8 +30,6 @@ public class DriveOneModule extends CommandBase {
 
   }
   
-  
-
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
@@ -46,17 +44,15 @@ public class DriveOneModule extends CommandBase {
     }
 
     RobotContainer.swerveDrive.driveOneModule(moduleNum, 
-    Robot.robotContainer.getDriverAxis(Axis.LEFT_Y), 
-    rotatePos
-    );
-
-    //pull the degree from the Dpad and pass to module
+      Robot.robotContainer.getDriverAxis(Axis.LEFT_Y), 
+      rotatePos
+      );
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    //RODO:Make sure to stop the module, by using a stopAll method from SwerveDrive
+    //TODO:Make sure to stop the module, by using a stopAll method from SwerveDrive
 
   }
 

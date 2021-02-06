@@ -51,7 +51,7 @@ public class SwerveDrive extends SubsystemBase {
    * Creates a new SwerveDrive.
    */
   public SwerveDrive() {
-    
+    //TODO:add CANCoder adddress as third param, already named as rotation sensor in constants
     // Constructs the swerve modules 
     frontLeft = new SwerveModule(Constants.FRONT_LEFT_MOVE_MOTOR, Constants.FRONT_LEFT_ROTATE_MOTOR, Constants.FRONT_LEFT_ROTATE_SENSOR);
     rearLeft = new SwerveModule(Constants.REAR_LEFT_MOVE_MOTOR, Constants.REAR_LEFT_ROTATE_MOTOR, Constants.REAR_LEFT_ROTATE_SENSOR);

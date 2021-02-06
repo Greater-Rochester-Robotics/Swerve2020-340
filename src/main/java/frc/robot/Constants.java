@@ -59,8 +59,8 @@ public final class Constants {
     public static final double SWERVE_ROT_FF_VALUE = 0.0;
 
     //SparkMAX motor controllers
-    public static final int FRONT_LEFT_MOVE_MOTOR = 1;//module 0
     public static final int FRONT_LEFT_ROTATE_MOTOR = 2;//module 0
+<<<<<<< Updated upstream
     public static final int FRONT_LEFT_ROTATE_SENSOR = 10;//module 0
     public static final int REAR_LEFT_MOVE_MOTOR = 3;//module 1
     public static final int REAR_LEFT_ROTATE_MOTOR = 4;//module 1
@@ -71,4 +71,19 @@ public final class Constants {
     public static final int FRONT_RIGHT_MOVE_MOTOR = 7;//module 3
     public static final int FRONT_RIGHT_ROTATE_MOTOR = 8;//module 3
     public static final int FRONT_RIGHT_ROTATE_SENSOR = 9;//module 3 
+=======
+    public static final int REAR_LEFT_ROTATE_MOTOR = 4;//module 1
+    public static final int REAR_RIGHT_ROTATE_MOTOR = 6;//module 2
+    public static final int FRONT_RIGHT_ROTATE_MOTOR = 8;//module 3
+
+    //CTRE TalonFX's and CANCoders
+    public static final int FRONT_LEFT_ROTATION_SENSOR = 0;//module 0
+    public static final int FRONT_LEFT_MOVE_MOTOR = 1;//module 0
+    public static final int REAR_LEFT_ROTATION_SENSOR = 2;//module 1
+    public static final int REAR_LEFT_MOVE_MOTOR = 3;//module 1
+    public static final int REAR_RIGHT_ROTATION_SENSOR = 4;//module 2
+    public static final int REAR_RIGHT_MOVE_MOTOR = 5;//module 2
+    public static final int FRONT_RIGHT_ROTATION_SENSOR = 6;//module 3
+    public static final int FRONT_RIGHT_MOVE_MOTOR = 7;//module 3
+>>>>>>> Stashed changes
 }

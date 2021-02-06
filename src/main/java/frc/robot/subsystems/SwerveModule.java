@@ -21,30 +21,42 @@ import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 
 import frc.robot.Constants;
 
-
-
 /**
- * This is the class containing both motor controllers and all functions needed to run one swerve module.
+ * This is the class containing both motor controllers and 
+ * all functions needed to run one swerve module.
  */
 public class SwerveModule{
     private TalonFX driveMotor;
     private CANCoder rotateSensor;
     private CANSparkMax rotationMotor;
     private CANEncoder rotationEncoder;
-    // private CANAnalog rotationSensor;
+    // private CANAnalog rotationSensor;//switch to the CANCoder requires not doing this
     private CANPIDController rotatePID;
     private boolean isInverted = false;//this is for a future function
+    //these are for the periodic call thread
+    private volatile double currentAngle = 0.0;
+    private volatile double prevAngle = 0.0;
+    private volatile double currentPosition = 0.0;
+    private volatile double prevPosition = 0.0;
+    private volatile double[] positionArray = new double[]{0.0,0.0};
 
     /**
      * Creates a new SwerveModule object
      * 
      * @param driveMotorID The CAN ID of the SparkMax connected to the drive motor(expecting NEO)
+<<<<<<< Updated upstream
      * @param rotationMotorID The CAN ID of the SparkMax connected to the module rotation motor(expecting NEO 550)
      * @param canCoderID The CAN ID of the rotation sensor 
      */  
     public SwerveModule(int driveMotorID,int rotationMotorID,int canCoderID){
         //TODO:change this to a TalonFX, check all uses of driveMotor for the right syntax
         //TODO:ask Rob if this is done
+=======
+     * @param rotateMotorID The CAN ID of the SparkMax connected to the module rotation motor(expecting NEO 550)
+     * @param canCoderID The CAN ID of the CANCoder connected to module rotation
+     */  
+    public SwerveModule(int driveMotorID,int rotationMotorID,int canCoderID){
+>>>>>>> Stashed changes
         driveMotor = new TalonFX(driveMotorID);
         
         rotationMotor = new CANSparkMax(rotationMotorID , MotorType.kBrushless);
@@ -52,8 +64,8 @@ public class SwerveModule{
     
         rotateSensor = new CANCoder(canCoderID);
         rotateSensor.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
-        // rotationSensor = rotationMotor.getAnalog(CANAnalog.AnalogMode.kAbsolute);
-        // rotationSensor.setPositionConversionFactor(Constants.VOLTAGE_TO_RAD_CONV_FACTOR);
+        // rotationSensor = rotationMotor.getAnalog(CANAnalog.AnalogMode.kAbsolute);//switch to the CANCoder requires not doing this
+        // rotationSensor.setPositionConversionFactor(Constants.VOLTAGE_TO_RAD_CONV_FACTOR);//switch to the CANCoder requires not doing this
 
         rotationEncoder = rotationMotor.getEncoder();
         rotatePID = rotationMotor.getPIDController();
@@ -67,50 +79,84 @@ public class SwerveModule{
         rotatePID.setFF(Constants.SWERVE_ROT_FF_VALUE);
     }
 
+    protected synchronized void periodicThread(){
+        
+        this.currentAngle = Math.toRadians(rotateSensor.getAbsolutePosition());
+        double averAngle = (this.currentAngle + this.prevAngle)/2;
+        this.currentPosition = driveMotor.getSensorCollection().getIntegratedSensorPosition();
+        double deltaPos = this.currentPosition - this.prevPosition;
+        
+        this.positionArray[0]+= Math.sin(averAngle)*deltaPos;
+        this.positionArray[1]+= Math.cos(averAngle)*deltaPos;
+
+        this.prevAngle = this.currentAngle;
+        this.prevPosition = this.currentPosition;
+    }
+
     /**
      * Set the speed of the drive motor
      * 
      * @param value a number between -1.0 and 1.0, where 0.0 is not moving
      */
     public void setDriveMotor(double value){
-        driveMotor.set(TalonFXControlMode.PercentOutput,value);//*(isInvertted?-1:0));
+        driveMotor.set(TalonFXControlMode.PercentOutput,value*(isInverted?-1:0));
     }
 
-    //TODO:create access to the driveMotor encoder count
+    /**
+     * 
+     * @return the distance the drive wheel has traveled
+     */
     public double getDriveDistance(){
+<<<<<<< Updated upstream
+=======
+        // return this.currentPosition;//if we use the periodic call thread/method use this instead(might change to volatile)
+>>>>>>> Stashed changes
         return driveMotor.getSensorCollection().getIntegratedSensorPosition();
     }
 
     public double getDriveVelocity(){
+<<<<<<< Updated upstream
         return driveMotor.getSensorCollection().getDriveVelocity();
+=======
+        return driveMotor.getSensorCollection().getIntegratedSensorVelocity();
+>>>>>>> Stashed changes
     }
 
     //TODO:create a reset for the driveMotor encoder
 
+<<<<<<< Updated upstream
     public void resetEncoder(){
         //rotationEncoder.
     }
 
     //TODO:create a means of setting the value of the CANCoder(use setPosition of the CANCoder)
+=======
+    //TODO:create a means of setting the value of the CANCoder(use configMagneticOffset of the CANCoder)
+>>>>>>> Stashed changes
 
     /**
      * @return the position of the module in degrees, should limit from -180 to 180
      */
     public double getPosInDeg(){ 
-        //TODO:change to just getPostion from rotationSensor
         return rotateSensor.getAbsolutePosition();
     }
 
     /**
      * If this is too resource intensive, switch to a periodic call,
      *  and replace with a poll of said variable
+     * 
      * @return the position of the module in radians, should limit from -PI to PI
      */
     public double getPosInRad(){
-        //TODO:call getPosInDeg() and convert by multiplying by PI
+        // return this.currentPosition;//if we use the periodic call thread/method use this instead
         return getPosInDeg()*Constants.DEG_TO_RAD_CONV_FACTOR;//(isInverted?0:Math.PI));
         //TODO:Above has to be checked, if the sensor is positive clockwise, fix(Need Robot)
-        // double currentAngle = rotationSensor.getPosition();
+        // double currentAngleRad = Math.toRadians(getPosInDeg());
+        // //the following is a single line return, used with invertable drive
+        // return isInverted?
+        //     ((currentAngleRad <= 0.0)?currentAngleRad-180:-180+currentAngleRad):
+        //     (currentAngleRad);
+        // //the following is an if statement set used with invertable drive
         // if(isInverted){
         //     if(currentAngle <= Math.PI){
         //         return currentAngle;
@@ -125,6 +171,7 @@ public class SwerveModule{
     /**
      * this is a function meant for testing by getting the count from
      *  the rotational encoder which is internal to the NEO550.
+     * 
      * @return the encoder count(no units, naturally just the count)
      */
     public double getEncCount(){
@@ -133,17 +180,20 @@ public class SwerveModule{
 
     /**
      * set the setpoint for the module rotation
+     * 
      * @param targetPos a value between -PI and PI, PI is counter-clockwise, 0.0 is forward 
      */
     public void setPosInRad(double targetPos){
         double posDiff = targetPos - getPosInRad();
         double absDiff = Math.abs(posDiff);
+
+        //if the distance is more than a half circle,we going the wrong way, fix
         if(absDiff > Math.PI){
             //the distance the other way around the circle
             posDiff = posDiff - (Constants.TWO_PI*Math.signum(posDiff));
         }
 
-        // //This is for inverting the motor if target angle is 90-270 degrees away (not ready yet)
+        // //This is for inverting the motor if target angle is 90-270 degrees away, invert 
         // //To fix going the wrong way around the circle
         // if(absDiff >= Constants.THREE_PI_OVER_TWO){
         //     //the distance the other way around the circle
@@ -174,7 +224,7 @@ public class SwerveModule{
      * this method is used to stop the module completely.
      */
     public void stopAll(){
-        driveMotor.set(0.0);
+        driveMotor.set(TalonFXControlMode.PercentOutput,0.0);
         rotatePID.setReference(0.0,ControlType.kVoltage);
     }
 }
