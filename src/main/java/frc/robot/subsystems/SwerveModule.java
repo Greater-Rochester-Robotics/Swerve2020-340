@@ -39,10 +39,12 @@ public class SwerveModule{
      * Creates a new SwerveModule object
      * 
      * @param driveMotorID The CAN ID of the SparkMax connected to the drive motor(expecting NEO)
-     * @param rotateMotorID The CAN ID of the SparkMax connected to the module rotation motor(expecting NEO 550)
+     * @param rotationMotorID The CAN ID of the SparkMax connected to the module rotation motor(expecting NEO 550)
+     * @param canCoderID The CAN ID of the rotation sensor 
      */  
     public SwerveModule(int driveMotorID,int rotationMotorID,int canCoderID){
         //TODO:change this to a TalonFX, check all uses of driveMotor for the right syntax
+        //TODO:ask Rob if this is done
         driveMotor = new TalonFX(driveMotorID);
         
         rotationMotor = new CANSparkMax(rotationMotorID , MotorType.kBrushless);
@@ -76,14 +78,18 @@ public class SwerveModule{
 
     //TODO:create access to the driveMotor encoder count
     public double getDriveDistance(){
-        return drivemotor.getSensorCollection().getIntegratedSensorPosition();
+        return driveMotor.getSensorCollection().getIntegratedSensorPosition();
     }
 
     public double getDriveVelocity(){
-        return drivemotorVelosity.getSensorCollection().getIntegratedSensorVelosity();
+        return driveMotor.getSensorCollection().getDriveVelocity();
     }
 
     //TODO:create a reset for the driveMotor encoder
+
+    public void resetEncoder(){
+        //rotationEncoder.
+    }
 
     //TODO:create a means of setting the value of the CANCoder(use setPosition of the CANCoder)
 
