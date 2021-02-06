@@ -44,19 +44,12 @@ public class SwerveModule{
      * Creates a new SwerveModule object
      * 
      * @param driveMotorID The CAN ID of the SparkMax connected to the drive motor(expecting NEO)
-<<<<<<< Updated upstream
      * @param rotationMotorID The CAN ID of the SparkMax connected to the module rotation motor(expecting NEO 550)
      * @param canCoderID The CAN ID of the rotation sensor 
      */  
     public SwerveModule(int driveMotorID,int rotationMotorID,int canCoderID){
         //TODO:change this to a TalonFX, check all uses of driveMotor for the right syntax
         //TODO:ask Rob if this is done
-=======
-     * @param rotateMotorID The CAN ID of the SparkMax connected to the module rotation motor(expecting NEO 550)
-     * @param canCoderID The CAN ID of the CANCoder connected to module rotation
-     */  
-    public SwerveModule(int driveMotorID,int rotationMotorID,int canCoderID){
->>>>>>> Stashed changes
         driveMotor = new TalonFX(driveMotorID);
         
         rotationMotor = new CANSparkMax(rotationMotorID , MotorType.kBrushless);
@@ -107,32 +100,21 @@ public class SwerveModule{
      * @return the distance the drive wheel has traveled
      */
     public double getDriveDistance(){
-<<<<<<< Updated upstream
-=======
         // return this.currentPosition;//if we use the periodic call thread/method use this instead(might change to volatile)
->>>>>>> Stashed changes
         return driveMotor.getSensorCollection().getIntegratedSensorPosition();
     }
 
     public double getDriveVelocity(){
-<<<<<<< Updated upstream
-        return driveMotor.getSensorCollection().getDriveVelocity();
-=======
         return driveMotor.getSensorCollection().getIntegratedSensorVelocity();
->>>>>>> Stashed changes
     }
 
     //TODO:create a reset for the driveMotor encoder
 
-<<<<<<< Updated upstream
     public void resetEncoder(){
         //rotationEncoder.
     }
 
     //TODO:create a means of setting the value of the CANCoder(use setPosition of the CANCoder)
-=======
-    //TODO:create a means of setting the value of the CANCoder(use configMagneticOffset of the CANCoder)
->>>>>>> Stashed changes
 
     /**
      * @return the position of the module in degrees, should limit from -180 to 180
